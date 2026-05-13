@@ -1,0 +1,49 @@
+<section class="news-page">
+  <header class="news-page__header">
+    <div>
+      <h2>Feed de notícias</h2>
+      <p>Ordenado por termômetro de relevância (cobertura entre fontes + recência).</p>
+    </div>
+    <button type="button" class="news-page__refresh" (click)="facade.load()" [disabled]="facade.loading()">
+      {{ facade.loading() ? 'Carregando…' : 'Atualizar' }}
+    </button>
+  </header>
+
+  @if (facade.error(); as err) {
+    <div class="news-page__error">
+      <span>Erro ao carregar notícias: {{ err }}</span>
+    </div>
+  }
+
+  @if (facade.loading() && facade.items().length === 0) {
+    <div class="news-page__state">Buscando notícias…</div>
+  } @else if (facade.isEmpty()) {
+    <div class="news-page__state">
+      Nenhuma notícia ainda. Rode <code>php artisan news:ingest</code> no backend.
+    </div>
+  } @else {
+    <ul class="news-list">
+      @for (cluster of facade.items(); track cluster.id) {
+        <li class="news-card">
+          <a class="news-card__link" [href]="cluster.url" target="_blank" rel="noopener">
+            <header class="news-card__head">
+              <div class="news-card__sources">
+                @for (source of cluster.sources; track source.slug) {
+                  <span [ngClass]="sourceClass(source.slug)">{{ source.name }}</span>
+                }
+              </div>
+              <time>{{ cluster.publishedAt | date: 'short' }}</time>
+            </header>
+            <h3 class="news-card__title">{{ cluster.title }}</h3>
+            <div class="news-card__meter">
+              <div class="news-card__meter-track">
+                <div class="news-card__meter-fill" [style.width.%]="cluster.thermometer"></div>
+              </div>
+              <span class="news-card__meter-score">{{ cluster.thermometer | number: '1.0-0' }}</span>
+            </div>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

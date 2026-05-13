@@ -1,0 +1,81 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    background: var(--ss-bg-surface);
+    border-bottom: 1px solid var(--ss-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ss-radius-sm);
+    background: var(--ss-accent);
+    color: #0a0c10;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+
+    span {
+      color: var(--ss-text-muted);
+      font-weight: 500;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    gap: 4px;
+
+    a {
+      padding: 6px 12px;
+      border-radius: var(--ss-radius-sm);
+      color: var(--ss-text-muted);
+      font-weight: 500;
+
+      &:hover {
+        background: var(--ss-bg-hover);
+        color: var(--ss-text);
+        text-decoration: none;
+      }
+
+      &.is-active {
+        color: var(--ss-accent);
+        background: var(--ss-accent-dim);
+      }
+    }
+  }
+
+  &__main {
+    flex: 1;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
