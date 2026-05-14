@@ -70,16 +70,18 @@ final class ClusterizeNewsItemUseCase
         $totalSources = max(1, $this->sources->countActive());
         $now = $this->clock->now();
 
-        $score = Thermometer::compute(
+        $result = Thermometer::compute(
             distinctSources: $distinctSources,
             totalActiveSources: $totalSources,
+            redditUpvotes: $cluster->redditUpvotes,
+            redditComments: $cluster->redditComments,
             latestPublishedAt: $item->publishedAt,
             now: $now,
         );
 
         return $this->clusters->update(
             $cluster->withRecomputedThermometer(
-                newScore: $score,
+                newScore: $result->score,
                 now: $now,
                 latestPublishedAt: $item->publishedAt,
             )

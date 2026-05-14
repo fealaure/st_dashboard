@@ -14,6 +14,9 @@ final class NewsCluster
         public readonly string $canonicalTitle,
         public readonly string $canonicalUrl,
         public readonly float $thermometer,
+        public readonly int $redditUpvotes,
+        public readonly int $redditComments,
+        public readonly ?DateTimeImmutable $redditSyncedAt,
         public readonly ?DateTimeImmutable $thermometerUpdatedAt,
         public readonly DateTimeImmutable $firstSeenAt,
         public readonly DateTimeImmutable $lastSeenAt,
@@ -32,6 +35,9 @@ final class NewsCluster
             canonicalTitle: $title,
             canonicalUrl: $url,
             thermometer: 0.0,
+            redditUpvotes: 0,
+            redditComments: 0,
+            redditSyncedAt: null,
             thermometerUpdatedAt: null,
             firstSeenAt: $publishedAt,
             lastSeenAt: $publishedAt,
@@ -49,9 +55,29 @@ final class NewsCluster
             canonicalTitle: $this->canonicalTitle,
             canonicalUrl: $this->canonicalUrl,
             thermometer: $newScore,
+            redditUpvotes: $this->redditUpvotes,
+            redditComments: $this->redditComments,
+            redditSyncedAt: $this->redditSyncedAt,
             thermometerUpdatedAt: $now,
             firstSeenAt: $this->firstSeenAt,
             lastSeenAt: $latestPublishedAt > $this->lastSeenAt ? $latestPublishedAt : $this->lastSeenAt,
+        );
+    }
+
+    public function withRedditAggregate(int $upvotes, int $comments, DateTimeImmutable $syncedAt): self
+    {
+        return new self(
+            id: $this->id,
+            simhash: $this->simhash,
+            canonicalTitle: $this->canonicalTitle,
+            canonicalUrl: $this->canonicalUrl,
+            thermometer: $this->thermometer,
+            redditUpvotes: $upvotes,
+            redditComments: $comments,
+            redditSyncedAt: $syncedAt,
+            thermometerUpdatedAt: $this->thermometerUpdatedAt,
+            firstSeenAt: $this->firstSeenAt,
+            lastSeenAt: $this->lastSeenAt,
         );
     }
 }

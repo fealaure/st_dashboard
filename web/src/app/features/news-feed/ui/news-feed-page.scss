@@ -184,4 +184,25 @@
     font-weight: 600;
     color: var(--ss-text-muted);
   }
+
+  &__reddit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ss-text-subtle);
+    margin-top: -2px;
+
+    &-up {
+      color: #ff7f50;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    &-sep {
+      opacity: 0.5;
+    }
+    &-com {
+      font-variant-numeric: tabular-nums;
+    }
+  }
 }

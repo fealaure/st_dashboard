@@ -4,18 +4,26 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
 use SaveState\News\Domain\ClusterRepository;
 use SaveState\News\Domain\NewsRepository;
+use SaveState\News\Domain\RedditClient;
+use SaveState\News\Domain\RedditSignalRepository;
 use SaveState\News\Domain\RssFetcher;
 use SaveState\News\Domain\SimhashHasher;
 use SaveState\News\Domain\SourceRepository;
+use SaveState\News\Domain\ThermometerSnapshotRepository;
 use SaveState\News\Infrastructure\EloquentClusterRepository;
 use SaveState\News\Infrastructure\EloquentNewsRepository;
+use SaveState\News\Infrastructure\EloquentRedditSignalRepository;
 use SaveState\News\Infrastructure\EloquentSourceRepository;
+use SaveState\News\Infrastructure\EloquentThermometerSnapshotRepository;
 use SaveState\News\Infrastructure\PhpSimhashHasher;
+use SaveState\News\Infrastructure\RedditApiClient;
 use SaveState\News\Infrastructure\SimplePieRssFetcher;
 use SaveState\Shared\Domain\Clock;
 use SaveState\Shared\Infrastructure\SystemClock;
@@ -29,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SourceRepository::class, EloquentSourceRepository::class);
         $this->app->bind(NewsRepository::class, EloquentNewsRepository::class);
         $this->app->bind(ClusterRepository::class, EloquentClusterRepository::class);
+        $this->app->bind(RedditSignalRepository::class, EloquentRedditSignalRepository::class);
+        $this->app->bind(ThermometerSnapshotRepository::class, EloquentThermometerSnapshotRepository::class);
         $this->app->singleton(SimhashHasher::class, PhpSimhashHasher::class);
 
         $this->app->bind(RssFetcher::class, function (Application $app): SimplePieRssFetcher {
@@ -41,6 +51,21 @@ class AppServiceProvider extends ServiceProvider
                 logger: $app->make(LoggerInterface::class),
                 cacheDir: $cacheDir,
                 cacheDurationSeconds: 600,
+            );
+        });
+
+        $this->app->singleton(RedditClient::class, function (Application $app): RedditApiClient {
+            $config = $app['config']->get('services.reddit', []);
+
+            return new RedditApiClient(
+                http: $app->make(HttpFactory::class),
+                cache: $app->make(CacheRepository::class),
+                logger: $app->make(LoggerInterface::class),
+                clientId: (string) ($config['client_id'] ?? ''),
+                clientSecret: (string) ($config['client_secret'] ?? ''),
+                username: (string) ($config['username'] ?? ''),
+                password: (string) ($config['password'] ?? ''),
+                userAgent: (string) ($config['user_agent'] ?? 'SaveStateDashboard/0.1'),
             );
         });
     }

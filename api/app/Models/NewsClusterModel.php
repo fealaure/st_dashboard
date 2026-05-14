@@ -19,6 +19,9 @@ class NewsClusterModel extends Model
         'canonical_title',
         'canonical_url',
         'thermometer',
+        'reddit_upvotes',
+        'reddit_comments',
+        'reddit_synced_at',
         'thermometer_updated_at',
         'first_seen_at',
         'last_seen_at',
@@ -27,6 +30,9 @@ class NewsClusterModel extends Model
     protected $casts = [
         'simhash' => 'integer',
         'thermometer' => 'float',
+        'reddit_upvotes' => 'integer',
+        'reddit_comments' => 'integer',
+        'reddit_synced_at' => 'datetime',
         'thermometer_updated_at' => 'datetime',
         'first_seen_at' => 'datetime',
         'last_seen_at' => 'datetime',
@@ -35,5 +41,10 @@ class NewsClusterModel extends Model
     public function items(): HasMany
     {
         return $this->hasMany(NewsItemModel::class, 'cluster_id');
+    }
+
+    public function redditSignals(): HasMany
+    {
+        return $this->hasMany(RedditSignalModel::class, 'cluster_id');
     }
 }

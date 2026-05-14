@@ -6,7 +6,6 @@ namespace SaveState\News\Infrastructure;
 
 use App\Models\NewsClusterModel;
 use App\Models\NewsItemModel;
-use App\Models\SourceModel;
 use DateTimeImmutable;
 use Generator;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +35,9 @@ final class EloquentClusterRepository implements ClusterRepository
             'canonical_title' => $cluster->canonicalTitle,
             'canonical_url' => $cluster->canonicalUrl,
             'thermometer' => $cluster->thermometer,
+            'reddit_upvotes' => $cluster->redditUpvotes,
+            'reddit_comments' => $cluster->redditComments,
+            'reddit_synced_at' => $cluster->redditSyncedAt,
             'thermometer_updated_at' => $cluster->thermometerUpdatedAt,
             'first_seen_at' => $cluster->firstSeenAt,
             'last_seen_at' => $cluster->lastSeenAt,
@@ -53,6 +55,9 @@ final class EloquentClusterRepository implements ClusterRepository
         $row = NewsClusterModel::query()->findOrFail($cluster->id);
         $row->fill([
             'thermometer' => $cluster->thermometer,
+            'reddit_upvotes' => $cluster->redditUpvotes,
+            'reddit_comments' => $cluster->redditComments,
+            'reddit_synced_at' => $cluster->redditSyncedAt,
             'thermometer_updated_at' => $cluster->thermometerUpdatedAt,
             'last_seen_at' => $cluster->lastSeenAt,
         ]);
@@ -98,17 +103,54 @@ final class EloquentClusterRepository implements ClusterRepository
                 ->map(fn ($row) => ['slug' => (string) $row->slug, 'name' => (string) $row->name])
                 ->toArray();
 
-            $latestRow = NewsItemModel::query()
-                ->where('cluster_id', $clusterRow->id)
-                ->orderByDesc('published_at')
-                ->first();
+            $latest = $this->getLatestPublishedAt((int) $clusterRow->id)
+                ?? DateTimeImmutable::createFromMutable($clusterRow->last_seen_at->toDateTime());
 
-            $latestPublishedAt = $latestRow
-                ? DateTimeImmutable::createFromMutable($latestRow->published_at->toDateTime())
-                : DateTimeImmutable::createFromMutable($clusterRow->last_seen_at->toDateTime());
-
-            yield [$this->toDomain($clusterRow), $sources, $latestPublishedAt];
+            yield [$this->toDomain($clusterRow), $sources, $latest];
         }
+    }
+
+    public function dueForRedditSync(int $maxAgeHours, int $resyncAfterHours): Generator
+    {
+        $cutoff = now()->subHours(max(1, $maxAgeHours));
+        $resyncBefore = now()->subHours(max(1, $resyncAfterHours));
+
+        $rows = NewsClusterModel::query()
+            ->where('last_seen_at', '>=', $cutoff)
+            ->where(function ($q) use ($resyncBefore): void {
+                $q->whereNull('reddit_synced_at')
+                  ->orWhere('reddit_synced_at', '<', $resyncBefore);
+            })
+            ->orderBy('reddit_synced_at')
+            ->cursor();
+
+        foreach ($rows as $row) {
+            yield $this->toDomain($row);
+        }
+    }
+
+    public function recentForSnapshot(int $maxAgeHours): Generator
+    {
+        $cutoff = now()->subHours(max(1, $maxAgeHours));
+
+        $rows = NewsClusterModel::query()
+            ->where('last_seen_at', '>=', $cutoff)
+            ->orderBy('id')
+            ->cursor();
+
+        foreach ($rows as $row) {
+            yield $this->toDomain($row);
+        }
+    }
+
+    public function getLatestPublishedAt(int $clusterId): ?DateTimeImmutable
+    {
+        $row = NewsItemModel::query()
+            ->where('cluster_id', $clusterId)
+            ->orderByDesc('published_at')
+            ->first();
+
+        return $row ? DateTimeImmutable::createFromMutable($row->published_at->toDateTime()) : null;
     }
 
     private function toDomain(NewsClusterModel $row): NewsCluster
@@ -119,6 +161,11 @@ final class EloquentClusterRepository implements ClusterRepository
             canonicalTitle: (string) $row->canonical_title,
             canonicalUrl: (string) $row->canonical_url,
             thermometer: (float) $row->thermometer,
+            redditUpvotes: (int) $row->reddit_upvotes,
+            redditComments: (int) $row->reddit_comments,
+            redditSyncedAt: $row->reddit_synced_at
+                ? DateTimeImmutable::createFromMutable($row->reddit_synced_at->toDateTime())
+                : null,
             thermometerUpdatedAt: $row->thermometer_updated_at
                 ? DateTimeImmutable::createFromMutable($row->thermometer_updated_at->toDateTime())
                 : null,

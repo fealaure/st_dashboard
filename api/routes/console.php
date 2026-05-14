@@ -9,5 +9,14 @@ Schedule::command('news:ingest')
     ->withoutOverlapping()
     ->runInBackground();
 
+Schedule::command('reddit:sync')
+    ->everyThirtyMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+Schedule::command('thermometer:snapshot')
+    ->hourly()
+    ->withoutOverlapping();
+
 Schedule::command('news:prune', ['--days=30'])
     ->dailyAt('03:00');

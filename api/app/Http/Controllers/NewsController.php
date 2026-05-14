@@ -29,6 +29,11 @@ class NewsController extends Controller
                 'thermometer' => $cluster->thermometer,
                 'coverage' => count($sources),
                 'sources' => $sources,
+                'reddit' => [
+                    'upvotes' => $cluster->redditUpvotes,
+                    'comments' => $cluster->redditComments,
+                    'syncedAt' => $cluster->redditSyncedAt?->format(\DateTimeInterface::ATOM),
+                ],
                 'publishedAt' => $publishedAt->format(\DateTimeInterface::ATOM),
                 'firstSeenAt' => $cluster->firstSeenAt->format(\DateTimeInterface::ATOM),
                 'lastSeenAt' => $cluster->lastSeenAt->format(\DateTimeInterface::ATOM),

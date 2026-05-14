@@ -2,6 +2,7 @@ import { DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 
 import { NewsFeedFacade } from '../application/news-feed-facade';
+import { NewsCluster } from '../domain/news-item';
 
 @Component({
   selector: 'ss-news-feed-page',
@@ -20,4 +21,12 @@ export class NewsFeedPage implements OnInit {
     'news-card__source': true,
     [`news-card__source--${slug}`]: true
   });
+
+  protected redditTitle(cluster: NewsCluster): string {
+    const total = cluster.reddit.upvotes + cluster.reddit.comments;
+    if (total === 0) {
+      return 'Sem sinal do Reddit ainda';
+    }
+    return `${cluster.reddit.upvotes} upvotes e ${cluster.reddit.comments} comentários no Reddit`;
+  }
 }

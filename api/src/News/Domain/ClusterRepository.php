@@ -32,4 +32,19 @@ interface ClusterRepository
      *   cluster, fontes distintas que cobriram, latestPublishedAt
      */
     public function topByThermometer(int $limit, int $maxAgeHours): iterable;
+
+    /**
+     * Clusters cuja last_seen_at está dentro da janela e que ainda não foram
+     * sincronizados com o Reddit, ou cujo último sync foi há mais de N horas.
+     *
+     * @return iterable<NewsCluster>
+     */
+    public function dueForRedditSync(int $maxAgeHours, int $resyncAfterHours): iterable;
+
+    /**
+     * @return iterable<NewsCluster>
+     */
+    public function recentForSnapshot(int $maxAgeHours): iterable;
+
+    public function getLatestPublishedAt(int $clusterId): ?\DateTimeImmutable;
 }
