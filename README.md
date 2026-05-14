@@ -1,6 +1,6 @@
 # Save State Dashboard
 
-Dashboard interno da [Save State](#) para acompanhar o cenário de games em tempo real: feed agregado de notícias dos principais sites internacionais, termômetro de relevância por notícia e calendário de próximos lançamentos.
+Dashboard interno do [Save State](https://savestate.com.br/) para acompanhar o cenário de games em tempo real: feed agregado de notícias dos principais sites internacionais, termômetro de relevância por notícia e calendário de próximos lançamentos.
 
 > Trabalho em andamento. Veja [Roadmap](#roadmap) abaixo pro status atual.
 
