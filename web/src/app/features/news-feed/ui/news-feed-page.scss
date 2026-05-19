@@ -30,6 +30,7 @@
     color: var(--ss-text);
     font: inherit;
     cursor: pointer;
+    transition: border-color 120ms ease, color 120ms ease;
 
     &:hover:not(:disabled) {
       border-color: var(--ss-accent);
@@ -65,6 +66,151 @@
       color: var(--ss-accent);
     }
   }
+
+  &__reset {
+    margin-left: 8px;
+    background: none;
+    border: none;
+    color: var(--ss-accent);
+    cursor: pointer;
+    font: inherit;
+    text-decoration: underline;
+  }
+}
+
+.news-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  padding: 12px 16px;
+  background: var(--ss-bg-surface);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius-md);
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+
+    &--meter {
+      flex: 1;
+      min-width: 220px;
+    }
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--ss-text-subtle);
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__btn {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--ss-radius-sm);
+    border: 1px solid var(--ss-border-strong);
+    background: var(--ss-bg-elevated);
+    color: var(--ss-text-muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
+
+    &:hover {
+      color: var(--ss-text);
+    }
+
+    &.is-active {
+      background: var(--ss-accent-dim);
+      border-color: var(--ss-accent);
+      color: var(--ss-accent);
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  &__chip {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    background: var(--ss-bg-elevated);
+    color: var(--ss-text-muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 120ms ease, border-color 120ms ease;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &.is-active {
+      opacity: 1;
+      border-color: currentColor;
+    }
+
+    &--ign {
+      color: #ff6b73;
+      background: rgba(237, 28, 36, 0.15);
+    }
+    &--gamespot {
+      color: #f0b54a;
+      background: rgba(255, 175, 0, 0.12);
+    }
+    &--eurogamer {
+      color: #b39ff8;
+      background: rgba(127, 88, 247, 0.15);
+    }
+    &--vgc {
+      color: var(--ss-accent);
+      background: var(--ss-accent-dim);
+    }
+  }
+
+  &__slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--ss-bg-elevated);
+    border-radius: 2px;
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--ss-accent);
+      cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(0, 194, 255, 0.18);
+    }
+    &::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border: none;
+      border-radius: 50%;
+      background: var(--ss-accent);
+      cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(0, 194, 255, 0.18);
+    }
+  }
 }
 
 .news-list {
@@ -81,6 +227,7 @@
   border: 1px solid var(--ss-border);
   border-radius: var(--ss-radius-md);
   transition: border-color 120ms ease, transform 120ms ease;
+  animation: fadeUp 220ms ease both;
 
   &:hover {
     border-color: var(--ss-accent);
@@ -185,13 +332,18 @@
     color: var(--ss-text-muted);
   }
 
+  &__trend {
+    display: flex;
+    align-items: center;
+    margin-top: -2px;
+  }
+
   &__reddit {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 11px;
     color: var(--ss-text-subtle);
-    margin-top: -2px;
 
     &-up {
       color: #ff7f50;
@@ -204,5 +356,16 @@
     &-com {
       font-variant-numeric: tabular-nums;
     }
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

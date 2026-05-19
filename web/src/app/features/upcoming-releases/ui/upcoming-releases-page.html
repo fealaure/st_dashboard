@@ -1,0 +1,96 @@
+<section class="releases-page">
+  <header class="releases-page__header">
+    <div>
+      <h2>Próximos lançamentos</h2>
+      <p>Próximos 90 dias — ordenado por hype IGDB.</p>
+    </div>
+    <button type="button" class="releases-page__refresh" (click)="facade.load()" [disabled]="facade.loading()">
+      {{ facade.loading() ? 'Carregando…' : 'Atualizar' }}
+    </button>
+  </header>
+
+  <div class="releases-filters">
+    <div class="releases-filters__search">
+      <span class="releases-filters__search-icon">🔍</span>
+      <input
+        type="search"
+        placeholder="Buscar por nome…"
+        class="releases-filters__input"
+        [value]="facade.search()"
+        (input)="onSearchInput($event)"
+      />
+    </div>
+    <div class="releases-filters__chips">
+      @for (platform of facade.availablePlatforms(); track platform) {
+        <button
+          type="button"
+          [ngClass]="chipClass(platform)"
+          (click)="facade.togglePlatform(platform)"
+        >
+          {{ platform }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (facade.error(); as err) {
+    <div class="releases-page__error">
+      <span>Erro ao carregar lançamentos: {{ err }}</span>
+    </div>
+  }
+
+  @if (facade.loading() && facade.items().length === 0) {
+    <ul class="releases-list">
+      @for (_ of skeletonCount; track $index) {
+        <li><ss-card-skeleton variant="release" /></li>
+      }
+    </ul>
+  } @else if (facade.isEmpty()) {
+    <div class="releases-page__state">
+      Nenhum lançamento cadastrado. Rode <code>php artisan releases:sync</code> no backend.
+    </div>
+  } @else if (facade.isFilteredEmpty()) {
+    <div class="releases-page__state">
+      Nenhum lançamento bate com os filtros atuais.
+      <button type="button" class="releases-page__reset" (click)="facade.resetFilters()">limpar filtros</button>
+    </div>
+  } @else {
+    <ul class="releases-list">
+      @for (release of facade.visibleItems(); track release.id) {
+        <li class="release-card">
+          <a
+            class="release-card__link"
+            [href]="release.igdbUrl ?? '#'"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="release-card__cover">
+              @if (release.coverUrl) {
+                <img [src]="release.coverUrl" [alt]="release.name" loading="lazy" />
+              } @else {
+                <div class="release-card__cover-fallback">Sem capa</div>
+              }
+              @if (release.hype > 0) {
+                <span class="release-card__hype" title="IGDB Hype">🔥 {{ release.hype }}</span>
+              }
+            </div>
+            <div class="release-card__body">
+              <h3 class="release-card__name">{{ release.name }}</h3>
+              <time class="release-card__date">
+                {{ release.releaseDate ? (release.releaseDate | date: 'd MMM y') : 'TBD' }}
+              </time>
+              <div class="release-card__platforms">
+                @for (platform of release.platforms; track platform) {
+                  <span [class]="platformClass(platform)">{{ platformShort(platform) }}</span>
+                }
+              </div>
+              @if (release.publishers.length > 0) {
+                <p class="release-card__publisher">{{ release.publishers.join(', ') }}</p>
+              }
+            </div>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

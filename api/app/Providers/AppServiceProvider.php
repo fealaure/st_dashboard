@@ -25,6 +25,10 @@ use SaveState\News\Infrastructure\EloquentThermometerSnapshotRepository;
 use SaveState\News\Infrastructure\PhpSimhashHasher;
 use SaveState\News\Infrastructure\RedditApiClient;
 use SaveState\News\Infrastructure\SimplePieRssFetcher;
+use SaveState\Releases\Domain\IgdbClient;
+use SaveState\Releases\Domain\ReleaseRepository;
+use SaveState\Releases\Infrastructure\EloquentReleaseRepository;
+use SaveState\Releases\Infrastructure\IgdbApiClient;
 use SaveState\Shared\Domain\Clock;
 use SaveState\Shared\Infrastructure\SystemClock;
 
@@ -66,6 +70,21 @@ class AppServiceProvider extends ServiceProvider
                 username: (string) ($config['username'] ?? ''),
                 password: (string) ($config['password'] ?? ''),
                 userAgent: (string) ($config['user_agent'] ?? 'SaveStateDashboard/0.1'),
+            );
+        });
+
+        $this->app->bind(ReleaseRepository::class, EloquentReleaseRepository::class);
+
+        $this->app->singleton(IgdbClient::class, function (Application $app): IgdbApiClient {
+            $config = $app['config']->get('services.twitch', []);
+
+            return new IgdbApiClient(
+                http: $app->make(HttpFactory::class),
+                cache: $app->make(CacheRepository::class),
+                logger: $app->make(LoggerInterface::class),
+                clock: $app->make(Clock::class),
+                clientId: (string) ($config['client_id'] ?? ''),
+                clientSecret: (string) ($config['client_secret'] ?? ''),
             );
         });
     }

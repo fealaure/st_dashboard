@@ -20,3 +20,7 @@ Schedule::command('thermometer:snapshot')
 
 Schedule::command('news:prune', ['--days=30'])
     ->dailyAt('03:00');
+
+Schedule::command('releases:sync')
+    ->dailyAt('04:00')
+    ->withoutOverlapping();

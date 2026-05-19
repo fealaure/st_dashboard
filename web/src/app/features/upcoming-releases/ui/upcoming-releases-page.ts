@@ -1,66 +1,49 @@
-import { Component, inject } from '@angular/core';
+import { DatePipe, NgClass } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 
+import { CardSkeletonComponent } from '../../../shared/card-skeleton';
 import { ReleasesFacade } from '../application/releases-facade';
 
 @Component({
   selector: 'ss-upcoming-releases-page',
-  imports: [],
-  template: `
-    <section class="releases-page">
-      <header class="releases-page__header">
-        <h2>Próximos lançamentos</h2>
-        <p>Calendário de lançamentos pra apoiar pedidos de review key.</p>
-      </header>
-      <div class="releases-page__placeholder">
-        <span class="releases-page__dot"></span>
-        <p>Integração com IGDB ainda não implementada — Fase 4.</p>
-      </div>
-    </section>
-  `,
-  styles: [
-    `
-      .releases-page {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .releases-page__header h2 {
-        margin: 0 0 4px;
-        font-size: 20px;
-        font-weight: 600;
-      }
-
-      .releases-page__header p {
-        margin: 0;
-        color: var(--ss-text-muted);
-      }
-
-      .releases-page__placeholder {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 16px;
-        background: var(--ss-bg-surface);
-        border: 1px solid var(--ss-border);
-        border-radius: var(--ss-radius-md);
-      }
-
-      .releases-page__placeholder .releases-page__dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--ss-accent);
-        box-shadow: 0 0 12px var(--ss-accent);
-      }
-
-      .releases-page__placeholder p {
-        margin: 0;
-        color: var(--ss-text-muted);
-      }
-    `
-  ]
+  imports: [DatePipe, NgClass, CardSkeletonComponent],
+  templateUrl: './upcoming-releases-page.html',
+  styleUrl: './upcoming-releases-page.scss'
 })
-export class UpcomingReleasesPage {
+export class UpcomingReleasesPage implements OnInit {
   protected readonly facade = inject(ReleasesFacade);
+  protected readonly skeletonCount = Array.from({ length: 10 });
+
+  ngOnInit(): void {
+    this.facade.load();
+  }
+
+  protected platformShort(platform: string): string {
+    const map: Record<string, string> = {
+      'PC (Microsoft Windows)': 'PC',
+      'PlayStation 5': 'PS5',
+      'Xbox Series X|S': 'Xbox',
+      'Nintendo Switch': 'Switch',
+      'Nintendo Switch 2': 'Switch 2'
+    };
+    return map[platform] ?? platform;
+  }
+
+  protected platformClass(platform: string): string {
+    const short = this.platformShort(platform).toLowerCase().replace(/[^a-z0-9]/g, '-');
+    return `release-card__platform release-card__platform--${short}`;
+  }
+
+  protected chipClass(platform: string): Record<string, boolean> {
+    const slug = platform.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    return {
+      'releases-filters__chip': true,
+      [`releases-filters__chip--${slug}`]: true,
+      'is-active': this.facade.activePlatforms().has(platform)
+    };
+  }
+
+  protected onSearchInput(event: Event): void {
+    this.facade.setSearch((event.target as HTMLInputElement).value);
+  }
 }

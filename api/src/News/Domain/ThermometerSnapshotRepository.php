@@ -16,4 +16,12 @@ interface ThermometerSnapshotRepository
         float $recencyComponent,
         DateTimeImmutable $capturedAt,
     ): void;
+
+    /**
+     * Retorna a série temporal do termômetro de um cluster nas últimas N horas,
+     * mais antigos primeiro.
+     *
+     * @return list<array{capturedAt: DateTimeImmutable, thermometer: float}>
+     */
+    public function forCluster(int $clusterId, int $hoursBack): array;
 }

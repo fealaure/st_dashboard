@@ -9,6 +9,55 @@
     </button>
   </header>
 
+  <div class="news-filters">
+    <div class="news-filters__group">
+      <label class="news-filters__label">Janela</label>
+      <div class="news-filters__buttons">
+        @for (option of windowOptions; track option.value) {
+          <button
+            type="button"
+            class="news-filters__btn"
+            [class.is-active]="facade.window() === option.value"
+            (click)="facade.setWindow(option.value)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="news-filters__group">
+      <label class="news-filters__label">Fontes</label>
+      <div class="news-filters__chips">
+        @for (source of facade.availableSources(); track source.slug) {
+          <button
+            type="button"
+            [ngClass]="chipClass(source.slug, facade.activeSources().has(source.slug))"
+            (click)="facade.toggleSource(source.slug)"
+          >
+            {{ source.name }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="news-filters__group news-filters__group--meter">
+      <label class="news-filters__label" for="news-min-thermometer">
+        Termômetro mínimo: <strong>{{ facade.minThermometer() }}</strong>
+      </label>
+      <input
+        id="news-min-thermometer"
+        type="range"
+        min="0"
+        max="100"
+        step="5"
+        class="news-filters__slider"
+        [value]="facade.minThermometer()"
+        (input)="onThermometerChange($event)"
+      />
+    </div>
+  </div>
+
   @if (facade.error(); as err) {
     <div class="news-page__error">
       <span>Erro ao carregar notícias: {{ err }}</span>
@@ -16,20 +65,29 @@
   }
 
   @if (facade.loading() && facade.items().length === 0) {
-    <div class="news-page__state">Buscando notícias…</div>
+    <ul class="news-list">
+      @for (_ of skeletonCount; track $index) {
+        <li><ss-card-skeleton variant="news" /></li>
+      }
+    </ul>
   } @else if (facade.isEmpty()) {
     <div class="news-page__state">
       Nenhuma notícia ainda. Rode <code>php artisan news:ingest</code> no backend.
     </div>
+  } @else if (facade.isFilteredEmpty()) {
+    <div class="news-page__state">
+      Nenhuma notícia bate com os filtros atuais.
+      <button type="button" class="news-page__reset" (click)="facade.resetFilters()">limpar filtros</button>
+    </div>
   } @else {
     <ul class="news-list">
-      @for (cluster of facade.items(); track cluster.id) {
+      @for (cluster of facade.visibleItems(); track cluster.id) {
         <li class="news-card">
           <a class="news-card__link" [href]="cluster.url" target="_blank" rel="noopener">
             <header class="news-card__head">
               <div class="news-card__sources">
                 @for (source of cluster.sources; track source.slug) {
-                  <span [ngClass]="sourceClass(source.slug)">{{ source.name }}</span>
+                  <span [ngClass]="sourceClass(source.slug, true)">{{ source.name }}</span>
                 }
               </div>
               <time>{{ cluster.publishedAt | date: 'short' }}</time>
@@ -40,6 +98,9 @@
                 <div class="news-card__meter-fill" [style.width.%]="cluster.thermometer"></div>
               </div>
               <span class="news-card__meter-score">{{ cluster.thermometer | number: '1.0-0' }}</span>
+            </div>
+            <div class="news-card__trend">
+              <ss-sparkline [points]="facade.snapshotsFor(cluster.id)" />
             </div>
             @if (cluster.reddit.upvotes > 0 || cluster.reddit.comments > 0) {
               <div class="news-card__reddit" [title]="redditTitle(cluster)">
