@@ -17,10 +17,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the Save State brand', async () => {
+  it('should render the Save State logo', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Save State');
+    const logo = compiled.querySelector('img.app-shell__logo') as HTMLImageElement | null;
+    expect(logo?.getAttribute('alt')).toContain('Save State');
   });
 });

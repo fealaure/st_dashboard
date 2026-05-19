@@ -2,7 +2,6 @@
 
 Dashboard interno do [Save State](https://savestate.com.br/) para acompanhar o cenário de games em tempo real: feed agregado de notícias dos principais sites internacionais, termômetro de relevância por notícia e calendário de próximos lançamentos.
 
-> Trabalho em andamento. Veja [Roadmap](#roadmap) abaixo pro status atual.
 
 ## Estrutura
 
@@ -97,17 +96,6 @@ web/src/app/features/news-feed/
 ├── infrastructure/   # NewsApi (HttpClient)
 └── ui/               # componentes
 ```
-
-## Roadmap
-
-| Fase | Status | Entrega |
-|---|---|---|
-| 0 | ✅ | Scaffolding monorepo + DDD + MySQL + tema dark |
-| 1 | ✅ | Ingestão RSS ponta a ponta + listagem |
-| 2 | ✅ | Clustering por simhash + termômetro de cobertura |
-| 3 | ⏭️ | Reddit API + score híbrido + snapshots históricos |
-| 4 | 📋 | IGDB + tela de lançamentos |
-| 5 | 📋 | Polish visual + filtros + busca |
 
 ## Licença
 
