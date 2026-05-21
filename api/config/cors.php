@@ -10,6 +10,7 @@ return [
     'allowed_origins' => [
         'http://localhost:4200',
         'http://127.0.0.1:4200',
+        'https://dashboard.savestate.com.br',
     ],
 
     'allowed_origins_patterns' => [],

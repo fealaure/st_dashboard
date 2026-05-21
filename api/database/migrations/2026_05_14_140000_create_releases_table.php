@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->json('platforms')->nullable();
             $table->json('publishers')->nullable();
             $table->string('igdb_url', 500)->nullable();
-            $table->timestamp('last_synced_at')->index();
+            $table->timestamp('last_synced_at')->useCurrent()->index();
             $table->timestamps();
         });
     }

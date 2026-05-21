@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 import { SparklinePoint } from '../../../shared/sparkline';
 
 interface SnapshotsResponse {
@@ -11,7 +12,7 @@ interface SnapshotsResponse {
 @Injectable({ providedIn: 'root' })
 export class SnapshotsApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/v1';
+  private readonly baseUrl = environment.apiBaseUrl;
 
   forCluster(clusterId: number, hours = 24): Observable<ReadonlyArray<SparklinePoint>> {
     return this.http

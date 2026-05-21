@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 import { Release } from '../domain/release';
 
 interface ReleasesListResponse {
@@ -11,7 +12,7 @@ interface ReleasesListResponse {
 @Injectable({ providedIn: 'root' })
 export class ReleasesApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/v1';
+  private readonly baseUrl = environment.apiBaseUrl;
 
   list(limit = 100, daysAhead = 90): Observable<ReadonlyArray<Release>> {
     return this.http

@@ -16,8 +16,8 @@ return new class extends Migration {
             $table->text('canonical_url');
             $table->decimal('thermometer', 5, 2)->default(0.00)->index();
             $table->timestamp('thermometer_updated_at')->nullable();
-            $table->timestamp('first_seen_at')->index();
-            $table->timestamp('last_seen_at')->index();
+            $table->timestamp('first_seen_at')->useCurrent()->index();
+            $table->timestamp('last_seen_at')->useCurrent()->index();
             $table->timestamps();
         });
     }

@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->string('permalink', 500);
             $table->integer('score')->default(0);
             $table->integer('num_comments')->default(0);
-            $table->timestamp('posted_at');
-            $table->timestamp('captured_at');
+            $table->timestamp('posted_at')->useCurrent();
+            $table->timestamp('captured_at')->useCurrent();
             $table->timestamps();
 
             $table->unique(['cluster_id', 'reddit_post_id']);

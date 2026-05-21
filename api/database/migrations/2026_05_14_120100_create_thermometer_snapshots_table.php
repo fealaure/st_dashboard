@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->decimal('coverage_component', 5, 2);
             $table->decimal('reddit_component', 5, 2);
             $table->decimal('recency_component', 5, 2);
-            $table->timestamp('captured_at');
+            $table->timestamp('captured_at')->useCurrent();
             $table->timestamps();
 
             $table->index(['cluster_id', 'captured_at']);

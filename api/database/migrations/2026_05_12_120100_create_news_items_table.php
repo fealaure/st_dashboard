@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->text('url');
             $table->text('excerpt')->nullable();
             $table->string('author', 200)->nullable();
-            $table->timestamp('published_at')->index();
-            $table->timestamp('fetched_at');
+            $table->timestamp('published_at')->useCurrent()->index();
+            $table->timestamp('fetched_at')->useCurrent();
             $table->timestamps();
 
             $table->unique(['source_id', 'external_id']);
