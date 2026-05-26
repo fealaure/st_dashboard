@@ -40,6 +40,13 @@ final class SourcesSeeder extends Seeder
                 'website_url' => 'https://www.videogameschronicle.com',
                 'weight' => 1.00,
             ],
+            [
+                'slug' => 'kotaku',
+                'name' => 'Kotaku',
+                'rss_url' => 'https://kotaku.com/rss',
+                'website_url' => 'https://kotaku.com',
+                'weight' => 1.00,
+            ],
         ];
 
         foreach ($sources as $source) {

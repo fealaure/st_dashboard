@@ -9,6 +9,12 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
+use SaveState\Guides\Domain\GuideRepository;
+use SaveState\Guides\Domain\GuideSourceRepository;
+use SaveState\Guides\Domain\RssFetcher as GuideRssFetcher;
+use SaveState\Guides\Infrastructure\EloquentGuideRepository;
+use SaveState\Guides\Infrastructure\EloquentGuideSourceRepository;
+use SaveState\Guides\Infrastructure\SimplePieRssFetcher as GuideSimplePieRssFetcher;
 use SaveState\News\Domain\ClusterRepository;
 use SaveState\News\Domain\NewsRepository;
 use SaveState\News\Domain\RedditClient;
@@ -52,6 +58,22 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new SimplePieRssFetcher(
+                logger: $app->make(LoggerInterface::class),
+                cacheDir: $cacheDir,
+                cacheDurationSeconds: 600,
+            );
+        });
+
+        $this->app->bind(GuideSourceRepository::class, EloquentGuideSourceRepository::class);
+        $this->app->bind(GuideRepository::class, EloquentGuideRepository::class);
+
+        $this->app->bind(GuideRssFetcher::class, function (Application $app): GuideSimplePieRssFetcher {
+            $cacheDir = storage_path('app/rss-cache');
+            if (! is_dir($cacheDir)) {
+                mkdir($cacheDir, 0775, true);
+            }
+
+            return new GuideSimplePieRssFetcher(
                 logger: $app->make(LoggerInterface::class),
                 cacheDir: $cacheDir,
                 cacheDurationSeconds: 600,

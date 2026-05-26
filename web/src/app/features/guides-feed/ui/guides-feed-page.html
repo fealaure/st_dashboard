@@ -1,0 +1,68 @@
+<section class="guides-page">
+  <header class="guides-page__header">
+    <div>
+      <h2>Guias</h2>
+      <p>Guias, walkthroughs e tips dos publishers que cobrimos. Ordenado por data.</p>
+    </div>
+    <button type="button" class="guides-page__refresh" (click)="facade.load()" [disabled]="facade.loading()">
+      {{ facade.loading() ? 'Carregando…' : 'Atualizar' }}
+    </button>
+  </header>
+
+  @if (facade.availableSources().length > 0) {
+    <div class="guides-filters">
+      <span class="guides-filters__label">Fontes</span>
+      <div class="guides-filters__chips">
+        @for (source of facade.availableSources(); track source.slug) {
+          <button
+            type="button"
+            [ngClass]="chipClass(source.slug, facade.activeSources().has(source.slug))"
+            (click)="facade.toggleSource(source.slug)"
+          >
+            {{ source.name }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (facade.error(); as err) {
+    <div class="guides-page__error">
+      <span>Erro ao carregar guias: {{ err }}</span>
+    </div>
+  }
+
+  @if (facade.loading() && facade.items().length === 0) {
+    <ul class="guides-list">
+      @for (_ of skeletonCount; track $index) {
+        <li><ss-card-skeleton variant="news" /></li>
+      }
+    </ul>
+  } @else if (facade.isEmpty()) {
+    <div class="guides-page__state">
+      Nenhum guia ainda. Rode <code>php artisan guides:ingest</code> no backend.
+    </div>
+  } @else if (facade.isFilteredEmpty()) {
+    <div class="guides-page__state">
+      Nenhum guia bate com os filtros.
+      <button type="button" class="guides-page__reset" (click)="facade.resetFilters()">limpar filtros</button>
+    </div>
+  } @else {
+    <ul class="guides-list">
+      @for (guide of facade.visibleItems(); track guide.id) {
+        <li class="guide-card">
+          <a class="guide-card__link" [href]="guide.url" target="_blank" rel="noopener">
+            <header class="guide-card__head">
+              <span class="guide-card__source">{{ guide.source.name }}</span>
+              <time>{{ guide.publishedAt | date: 'short' }}</time>
+            </header>
+            <h3 class="guide-card__title">{{ guide.title }}</h3>
+            @if (guide.excerpt) {
+              <p class="guide-card__excerpt">{{ guide.excerpt }}</p>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

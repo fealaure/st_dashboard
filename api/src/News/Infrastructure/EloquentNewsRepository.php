@@ -22,6 +22,11 @@ final class EloquentNewsRepository implements NewsRepository
             ->exists();
     }
 
+    public function existsByUrl(string $url): bool
+    {
+        return NewsItemModel::query()->where('url', $url)->exists();
+    }
+
     public function save(NewsItem $item): NewsItem
     {
         $row = NewsItemModel::query()->create([
