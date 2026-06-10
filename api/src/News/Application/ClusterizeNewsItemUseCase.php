@@ -9,9 +9,6 @@ use SaveState\News\Domain\NewsCluster;
 use SaveState\News\Domain\NewsItem;
 use SaveState\News\Domain\NewsRepository;
 use SaveState\News\Domain\SimhashHasher;
-use SaveState\News\Domain\SourceRepository;
-use SaveState\News\Domain\Thermometer;
-use SaveState\Shared\Domain\Clock;
 
 final class ClusterizeNewsItemUseCase
 {
@@ -32,9 +29,7 @@ final class ClusterizeNewsItemUseCase
     public function __construct(
         private readonly NewsRepository $news,
         private readonly ClusterRepository $clusters,
-        private readonly SourceRepository $sources,
         private readonly SimhashHasher $hasher,
-        private readonly Clock $clock,
     ) {
     }
 
@@ -66,26 +61,7 @@ final class ClusterizeNewsItemUseCase
 
         $this->news->assignToCluster($item->id, $cluster->id);
 
-        $distinctSources = $this->clusters->distinctSourcesCount($cluster->id);
-        $totalSources = max(1, $this->sources->countActive());
-        $now = $this->clock->now();
-
-        $result = Thermometer::compute(
-            distinctSources: $distinctSources,
-            totalActiveSources: $totalSources,
-            redditUpvotes: $cluster->redditUpvotes,
-            redditComments: $cluster->redditComments,
-            latestPublishedAt: $item->publishedAt,
-            now: $now,
-        );
-
-        return $this->clusters->update(
-            $cluster->withRecomputedThermometer(
-                newScore: $result->score,
-                now: $now,
-                latestPublishedAt: $item->publishedAt,
-            )
-        );
+        return $this->clusters->update($cluster->withLatestItem($item->publishedAt));
     }
 
     private function findMatch(int $simhash): ?NewsCluster

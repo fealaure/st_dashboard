@@ -1,13 +1,13 @@
 # Save State Dashboard
 
-Dashboard interno do [Save State](https://savestate.com.br/) para acompanhar o cenário de games em tempo real: feed agregado de notícias dos principais sites internacionais, termômetro de relevância por notícia e calendário de próximos lançamentos.
+Dashboard interno do [Save State](https://savestate.com.br/) para acompanhar o cenário de games em tempo real: feed agregado de notícias dos principais sites internacionais, guias e calendário de próximos lançamentos.
 
 
 ## Estrutura
 
 ```
 st-dashboard/
-├── api/    # Backend Laravel 11 (PHP 8.3) — agrega RSS, Reddit, IGDB e expõe JSON
+├── api/    # Backend Laravel 11 (PHP 8.3) — agrega RSS, IGDB e expõe JSON
 └── web/    # Frontend Angular 21 — consome a API e renderiza o dashboard
 ```
 
@@ -17,7 +17,7 @@ Os dois projetos são independentes e podem ser desenvolvidos e deployados separ
 
 - **Backend**: PHP 8.3 + Laravel 11, MySQL 8, arquitetura DDD em `api/src/` (namespace `SaveState\`)
 - **Frontend**: Angular 21 standalone + signals, SCSS, tema dark com azul Save State `#00c2ff`
-- **Fontes de dados**: RSS via [SimplePie](https://www.simplepie.org/) (IGN, GameSpot, Eurogamer, VGC); Reddit API e [IGDB](https://api.igdb.com/) virão nas próximas fases
+- **Fontes de dados**: RSS via [SimplePie](https://www.simplepie.org/) (IGN, GameSpot, Eurogamer, VGC, Kotaku) e [IGDB](https://api.igdb.com/) pros lançamentos
 - **Hospedagem alvo**: compartilhada cPanel/Plesk — cron do cPanel dispara `php artisan schedule:run` a cada minuto
 
 ## Como rodar localmente

@@ -6,24 +6,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use SaveState\News\Application\GetClusterSnapshotsUseCase;
 use SaveState\News\Application\ListNewsUseCase;
 
 class NewsController extends Controller
 {
-    public function snapshots(int $cluster, Request $request, GetClusterSnapshotsUseCase $useCase): JsonResponse
-    {
-        $hours = (int) $request->query('hours', '24');
-        $series = $useCase->execute($cluster, $hours);
-
-        $payload = array_map(static fn (array $point): array => [
-            'capturedAt' => $point['capturedAt']->format(\DateTimeInterface::ATOM),
-            'thermometer' => $point['thermometer'],
-        ], $series);
-
-        return response()->json(['data' => $payload]);
-    }
-
     public function index(Request $request, ListNewsUseCase $useCase): JsonResponse
     {
         $limit = (int) $request->query('limit', '50');
@@ -40,14 +26,7 @@ class NewsController extends Controller
                 'id' => $cluster->id,
                 'title' => $cluster->canonicalTitle,
                 'url' => $cluster->canonicalUrl,
-                'thermometer' => $cluster->thermometer,
-                'coverage' => count($sources),
                 'sources' => $sources,
-                'reddit' => [
-                    'upvotes' => $cluster->redditUpvotes,
-                    'comments' => $cluster->redditComments,
-                    'syncedAt' => $cluster->redditSyncedAt?->format(\DateTimeInterface::ATOM),
-                ],
                 'publishedAt' => $publishedAt->format(\DateTimeInterface::ATOM),
                 'firstSeenAt' => $cluster->firstSeenAt->format(\DateTimeInterface::ATOM),
                 'lastSeenAt' => $cluster->lastSeenAt->format(\DateTimeInterface::ATOM),

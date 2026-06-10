@@ -2,7 +2,7 @@
   <header class="news-page__header">
     <div>
       <h2>Feed de notícias</h2>
-      <p>Ordenado por termômetro de relevância (cobertura + Reddit + recência).</p>
+      <p>As matérias mais recentes dos principais sites de games, agrupadas por assunto.</p>
     </div>
     <button type="button" class="news-page__refresh" (click)="facade.load()" [disabled]="facade.loading()">
       {{ facade.loading() ? 'Carregando…' : 'Atualizar' }}
@@ -39,22 +39,6 @@
           </button>
         }
       </div>
-    </div>
-
-    <div class="news-filters__group news-filters__group--meter">
-      <label class="news-filters__label" for="news-min-thermometer">
-        Termômetro mínimo: <strong>{{ facade.minThermometer() }}</strong>
-      </label>
-      <input
-        id="news-min-thermometer"
-        type="range"
-        min="0"
-        max="100"
-        step="5"
-        class="news-filters__slider"
-        [value]="facade.minThermometer()"
-        (input)="onThermometerChange($event)"
-      />
     </div>
   </div>
 
@@ -93,22 +77,6 @@
               <time>{{ cluster.publishedAt | date: 'short' }}</time>
             </header>
             <h3 class="news-card__title">{{ cluster.title }}</h3>
-            <div class="news-card__meter">
-              <div class="news-card__meter-track">
-                <div class="news-card__meter-fill" [style.width.%]="cluster.thermometer"></div>
-              </div>
-              <span class="news-card__meter-score">{{ cluster.thermometer | number: '1.0-0' }}</span>
-            </div>
-            <div class="news-card__trend">
-              <ss-sparkline [points]="facade.snapshotsFor(cluster.id)" />
-            </div>
-            @if (cluster.reddit.upvotes > 0 || cluster.reddit.comments > 0) {
-              <div class="news-card__reddit" [title]="redditTitle(cluster)">
-                <span class="news-card__reddit-up">▲ {{ cluster.reddit.upvotes | number }}</span>
-                <span class="news-card__reddit-sep">•</span>
-                <span class="news-card__reddit-com">💬 {{ cluster.reddit.comments | number }}</span>
-              </div>
-            }
           </a>
         </li>
       }

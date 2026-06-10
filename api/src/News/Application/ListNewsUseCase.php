@@ -29,7 +29,7 @@ final class ListNewsUseCase
         $maxAgeHours = max(1, min($maxAgeHours, 24 * 30));
 
         $result = [];
-        foreach ($this->clusters->topByThermometer($limit, $maxAgeHours) as [$cluster, $sources, $publishedAt]) {
+        foreach ($this->clusters->recentWithSources($limit, $maxAgeHours) as [$cluster, $sources, $publishedAt]) {
             $result[] = [
                 'cluster' => $cluster,
                 'sources' => $sources,

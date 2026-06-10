@@ -23,28 +23,14 @@ interface ClusterRepository
     public function findById(int $id): ?NewsCluster;
 
     /**
-     * Quantas fontes distintas têm pelo menos um news_item ligado a esse cluster.
-     */
-    public function distinctSourcesCount(int $clusterId): int;
-
-    /**
+     * Clusters recentes (last_seen_at dentro da janela), ordenados do mais
+     * recente pro mais antigo, já com as fontes distintas que cobriram e a
+     * data de publicação mais recente.
+     *
      * @return iterable<array{NewsCluster, list<array{slug:string,name:string}>, \DateTimeImmutable}>
      *   cluster, fontes distintas que cobriram, latestPublishedAt
      */
-    public function topByThermometer(int $limit, int $maxAgeHours): iterable;
-
-    /**
-     * Clusters cuja last_seen_at está dentro da janela e que ainda não foram
-     * sincronizados com o Reddit, ou cujo último sync foi há mais de N horas.
-     *
-     * @return iterable<NewsCluster>
-     */
-    public function dueForRedditSync(int $maxAgeHours, int $resyncAfterHours): iterable;
-
-    /**
-     * @return iterable<NewsCluster>
-     */
-    public function recentForSnapshot(int $maxAgeHours): iterable;
+    public function recentWithSources(int $limit, int $maxAgeHours): iterable;
 
     public function getLatestPublishedAt(int $clusterId): ?\DateTimeImmutable;
 }

@@ -143,7 +143,6 @@ cPanel File Manager → `/home2/savest57/dashboard-api-app/` → **+ File** → 
 - `APP_KEY=base64:…` — gere com `php -r 'echo "base64:".base64_encode(random_bytes(32))."\n";'`
 - `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` — vindos do *MySQL Databases*
 - `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` — opcional, só precisa pra `releases:sync` ([dev.twitch.tv/console](https://dev.twitch.tv/console))
-- `REDDIT_CLIENT_*` — opcional, sobe rate limit da Reddit API (sem isso usa endpoint público com rate baixo)
 
 ### 6. MySQL strict mode — `config/database.php`
 
@@ -191,9 +190,8 @@ Esse cron tica a cada minuto e despacha o `schedule:run`, que internamente decid
 
 | Comando | Frequência | O que faz |
 |---|---|---|
-| `news:ingest` | `everyFifteenMinutes()` | Baixa RSS das 4 fontes (IGN, GameSpot, Eurogamer, VGC) |
-| `reddit:sync` | `everyThirtyMinutes()` | Cruza notícias com posts do Reddit pra o termômetro |
-| `thermometer:snapshot` | `hourly()` | Salva snapshot pra desenhar sparkline de tendência |
+| `news:ingest` | `everyFifteenMinutes()` | Baixa RSS das 5 fontes (IGN, GameSpot, Eurogamer, VGC, Kotaku) |
+| `guides:ingest` | `everyFifteenMinutes()` | Baixa RSS dos feeds de guias |
 | `news:prune --days=30` | `dailyAt('03:00')` | Remove notícias com mais de 30 dias |
 | `releases:sync` | `dailyAt('04:00')` | Puxa próximos lançamentos da IGDB (requer Twitch creds) |
 

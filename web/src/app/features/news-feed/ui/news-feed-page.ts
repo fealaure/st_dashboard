@@ -1,14 +1,12 @@
-import { DatePipe, DecimalPipe, NgClass } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 
 import { CardSkeletonComponent } from '../../../shared/card-skeleton';
-import { SparklineComponent } from '../../../shared/sparkline';
 import { NewsFeedFacade, TimeWindow } from '../application/news-feed-facade';
-import { NewsCluster } from '../domain/news-item';
 
 @Component({
   selector: 'ss-news-feed-page',
-  imports: [DatePipe, DecimalPipe, NgClass, CardSkeletonComponent, SparklineComponent],
+  imports: [DatePipe, NgClass, CardSkeletonComponent],
   templateUrl: './news-feed-page.html',
   styleUrl: './news-feed-page.scss'
 })
@@ -36,17 +34,4 @@ export class NewsFeedPage implements OnInit {
     [`news-filters__chip--${slug}`]: true,
     'is-active': isActive
   });
-
-  protected redditTitle(cluster: NewsCluster): string {
-    const total = cluster.reddit.upvotes + cluster.reddit.comments;
-    if (total === 0) {
-      return 'Sem sinal do Reddit ainda';
-    }
-    return `${cluster.reddit.upvotes} upvotes e ${cluster.reddit.comments} comentários no Reddit`;
-  }
-
-  protected onThermometerChange(event: Event): void {
-    const value = Number((event.target as HTMLInputElement).value);
-    this.facade.setMinThermometer(value);
-  }
 }
