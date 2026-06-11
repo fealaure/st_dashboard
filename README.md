@@ -17,7 +17,7 @@ Os dois projetos são independentes e podem ser desenvolvidos e deployados separ
 
 - **Backend**: PHP 8.3 + Laravel 11, MySQL 8, arquitetura DDD em `api/src/` (namespace `SaveState\`)
 - **Frontend**: Angular 21 standalone + signals, SCSS, tema dark com azul Save State `#00c2ff`
-- **Fontes de dados**: RSS via [SimplePie](https://www.simplepie.org/) (IGN, GameSpot, Eurogamer, VGC, Kotaku) e [IGDB](https://api.igdb.com/) pros lançamentos
+- **Fontes de dados**: RSS via [SimplePie](https://www.simplepie.org/) (IGN, Game Informer, Eurogamer, VGC, Kotaku) e [IGDB](https://api.igdb.com/) pros lançamentos
 - **Hospedagem alvo**: compartilhada cPanel/Plesk — cron do cPanel dispara `php artisan schedule:run` a cada minuto
 
 ## Como rodar localmente

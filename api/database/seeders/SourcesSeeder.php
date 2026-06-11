@@ -20,10 +20,10 @@ final class SourcesSeeder extends Seeder
                 'weight' => 1.00,
             ],
             [
-                'slug' => 'gamespot',
-                'name' => 'GameSpot',
-                'rss_url' => 'https://www.gamespot.com/feeds/mashup/',
-                'website_url' => 'https://www.gamespot.com',
+                'slug' => 'gameinformer',
+                'name' => 'Game Informer',
+                'rss_url' => 'https://www.gameinformer.com/rss.xml',
+                'website_url' => 'https://www.gameinformer.com',
                 'weight' => 1.00,
             ],
             [
@@ -59,5 +59,11 @@ final class SourcesSeeder extends Seeder
                 ])
             );
         }
+
+        // Lista declarativa: qualquer source que não esteja mais aqui é removido
+        // (ex.: gamespot saiu). O cascadeOnDelete em news_items.source_id limpa
+        // as notícias associadas junto.
+        $desiredSlugs = array_column($sources, 'slug');
+        DB::table('sources')->whereNotIn('slug', $desiredSlugs)->delete();
     }
 }

@@ -190,7 +190,7 @@ Esse cron tica a cada minuto e despacha o `schedule:run`, que internamente decid
 
 | Comando | Frequência | O que faz |
 |---|---|---|
-| `news:ingest` | `everyFifteenMinutes()` | Baixa RSS das 5 fontes (IGN, GameSpot, Eurogamer, VGC, Kotaku) |
+| `news:ingest` | `everyFifteenMinutes()` | Baixa RSS das 5 fontes (IGN, Game Informer, Eurogamer, VGC, Kotaku) |
 | `guides:ingest` | `everyFifteenMinutes()` | Baixa RSS dos feeds de guias |
 | `news:prune --days=30` | `dailyAt('03:00')` | Remove notícias com mais de 30 dias |
 | `releases:sync` | `dailyAt('04:00')` | Puxa próximos lançamentos da IGDB (requer Twitch creds) |
