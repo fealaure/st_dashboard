@@ -47,6 +47,13 @@ final class SourcesSeeder extends Seeder
                 'website_url' => 'https://kotaku.com',
                 'weight' => 1.00,
             ],
+            [
+                'slug' => 'insider-gaming',
+                'name' => 'Insider Gaming',
+                'rss_url' => 'https://insider-gaming.com/feed/',
+                'website_url' => 'https://insider-gaming.com',
+                'weight' => 1.00,
+            ],
         ];
 
         foreach ($sources as $source) {

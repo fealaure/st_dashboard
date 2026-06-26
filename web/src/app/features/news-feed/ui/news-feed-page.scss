@@ -175,6 +175,10 @@
       color: var(--ss-accent);
       background: var(--ss-accent-dim);
     }
+    &--insider-gaming {
+      color: #5fd08a;
+      background: rgba(95, 208, 138, 0.14);
+    }
   }
 }
 
@@ -255,6 +259,10 @@
     &--vgc {
       background: rgba(0, 194, 255, 0.15);
       color: var(--ss-accent);
+    }
+    &--insider-gaming {
+      background: rgba(95, 208, 138, 0.14);
+      color: #5fd08a;
     }
   }
 
