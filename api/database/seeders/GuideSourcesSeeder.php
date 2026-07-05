@@ -22,15 +22,8 @@ final class GuideSourcesSeeder extends Seeder
             [
                 'slug' => 'kotaku-tips',
                 'name' => 'Kotaku Tips',
-                'rss_url' => 'https://kotaku.com/tag/tips/rss',
-                'website_url' => 'https://kotaku.com/tag/tips',
-                'weight' => 1.00,
-            ],
-            [
-                'slug' => 'vgc-guides',
-                'name' => 'VGC Guides',
-                'rss_url' => 'https://www.videogameschronicle.com/category/guide/feed/',
-                'website_url' => 'https://www.videogameschronicle.com/category/guide/',
+                'rss_url' => 'https://kotaku.com/game-tips/rss',
+                'website_url' => 'https://kotaku.com/game-tips',
                 'weight' => 1.00,
             ],
         ];
@@ -45,5 +38,11 @@ final class GuideSourcesSeeder extends Seeder
                 ])
             );
         }
+
+        // Lista declarativa: qualquer source que não esteja mais aqui é removido
+        // (ex.: vgc-guides saiu). O cascadeOnDelete em guide_items.source_id limpa
+        // os guias associados junto.
+        $desiredSlugs = array_column($sources, 'slug');
+        DB::table('guide_sources')->whereNotIn('slug', $desiredSlugs)->delete();
     }
 }

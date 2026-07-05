@@ -51,6 +51,7 @@ final class IgdbApiClient implements IgdbClient
 fields name, slug, summary, hypes, url, first_release_date,
   cover.image_id,
   platforms.id, platforms.name,
+  release_dates.date, release_dates.platform, release_dates.date_format,
   involved_companies.publisher, involved_companies.company.name;
 where first_release_date >= {$fromEpoch}
   & first_release_date <= {$untilEpoch}
@@ -84,7 +85,32 @@ APIQUERY;
 
         $releases = [];
         foreach ($rows as $row) {
-            if (! isset($row['id'], $row['name'], $row['first_release_date'])) {
+            if (! isset($row['id'], $row['name'])) {
+                continue;
+            }
+
+            // Data efetiva: só datas EXATAS (date_format 0 = YYYYMMMMDD) numa
+            // plataforma principal e dentro da janela. Descarta os placeholders de
+            // data imprecisa da IGDB ("Q2 2026", "2026"...), que ela ancora no fim
+            // do período (ex.: 30/jun) e entupiam a lista com dezenas na mesma data.
+            $exactDates = [];
+            foreach ($row['release_dates'] ?? [] as $rd) {
+                if ((int) ($rd['date_format'] ?? -1) !== 0) {
+                    continue;
+                }
+                if (! isset($rd['date'], $rd['platform'])) {
+                    continue;
+                }
+                if (! isset($allowedPlatforms[(int) $rd['platform']])) {
+                    continue;
+                }
+                $ts = (int) $rd['date'];
+                if ($ts < $fromEpoch || $ts > $untilEpoch) {
+                    continue;
+                }
+                $exactDates[] = $ts;
+            }
+            if ($exactDates === []) {
                 continue;
             }
 
@@ -118,7 +144,7 @@ APIQUERY;
                 $coverUrl = sprintf('https://images.igdb.com/igdb/image/upload/t_cover_big/%s.jpg', $imageId);
             }
 
-            $releaseDate = (new DateTimeImmutable('@'.(int) $row['first_release_date']))->setTimezone($utc);
+            $releaseDate = (new DateTimeImmutable('@'.min($exactDates)))->setTimezone($utc);
 
             $releases[] = new Release(
                 id: null,
